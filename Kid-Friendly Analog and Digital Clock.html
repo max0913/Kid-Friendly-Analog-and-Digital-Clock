@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <title>Kid-Friendly Analog and Digital Clock</title>
+  <hta:application
+        applicationname="SnippetWindow"
+        border="thin"
+        showintaskbar="yes"
+        scroll="no"
+        windowstate="normal"
+    />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    #clock-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #analog-clock {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      border: 10px solid #333;
+      border-radius: 50%;
+      background: #fff8dc;
+      margin: 20px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .clock-face {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .hand {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      transition: all 0.05s ease-in-out;
+    }
+
+    .hour-hand {
+      width: 6px;
+      height: 70px;
+      background: #ff4500;
+      margin-top: -70px;
+      margin-left: -3px;
+    }
+
+    .minute-hand {
+      width: 4px;
+      height: 90px;
+      background: #32cd32;
+      margin-top: -90px;
+      margin-left: -2px;
+    }
+
+    .second-hand {
+      width: 2px;
+      height: 100px;
+      background: #1e90ff;
+      margin-top: -100px;
+      margin-left: -1px;
+    }
+
+    .number {
+      position: absolute;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      width: 30px;
+      height: 30px;
+      margin-left: -15px;
+      margin-top: -15px;
+    }
+
+    /* Positioning numbers around the clock face */
+    .number[data-number="12"] { top: 10%; left: 50%; }
+    .number[data-number="1"]  { top: 19%; left: 69%; }
+    .number[data-number="2"]  { top: 35%; left: 81%; }
+    .number[data-number="3"]  { top: 50%; left: 90%; }
+    .number[data-number="4"]  { top: 65%; left: 81%; }
+    .number[data-number="5"]  { top: 81%; left: 69%; }
+    .number[data-number="6"]  { top: 90%; left: 50%; }
+    .number[data-number="7"]  { top: 81%; left: 31%; }
+    .number[data-number="8"]  { top: 65%; left: 19%; }
+    .number[data-number="9"]  { top: 50%; left: 10%; }
+    .number[data-number="10"] { top: 35%; left: 19%; }
+    .number[data-number="11"] { top: 19%; left: 31%; }
+
+    #digital-clock {
+      font-size: 48px;
+      font-weight: bold;
+      margin: 20px;
+      color: #ff1493;
+      text-shadow: 2px 2px #ffa07a;
+    }
+  </style>
+</head>
+<body>
+  <div id="clock-container">
+    <div id="analog-clock">
+      <div class="clock-face">
+        <div class="hand hour-hand" style="transform: translate(-50%) rotate(41.5deg);"></div>
+        <div class="hand minute-hand" style="transform: translate(-50%) rotate(141.9deg);"></div>
+        <div class="hand second-hand" style="transform: translate(-50%) rotate(234deg);"></div>
+        <!-- Clock Numbers -->
+        <div class="number" data-number="12">12</div>
+        <div class="number" data-number="1">1</div>
+        <div class="number" data-number="2">2</div>
+        <div class="number" data-number="3">3</div>
+        <div class="number" data-number="4">4</div>
+        <div class="number" data-number="5">5</div>
+        <div class="number" data-number="6">6</div>
+        <div class="number" data-number="7">7</div>
+        <div class="number" data-number="8">8</div>
+        <div class="number" data-number="9">9</div>
+        <div class="number" data-number="10">10</div>
+        <div class="number" data-number="11">11</div>
+      </div>
+    </div>
+    <div id="digital-clock">01:23:39 PM</div>
+  </div>
+  <script>
+    function setClock() {
+      const now = new Date();
+
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
+
+      // Calculate degrees for each hand
+      const secondsDegrees = ((seconds / 60) * 360);
+      const minutesDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+      const hoursDegrees = ((hours % 12) / 12 * 360) + ((minutes / 60) * 30);
+
+      // Select hands
+      const hourHand = document.querySelector('.hour-hand');
+      const minuteHand = document.querySelector('.minute-hand');
+      const secondHand = document.querySelector('.second-hand');
+
+      // Rotate hands
+      hourHand.style.transform = `translate(-50%, 0) rotate(${hoursDegrees}deg)`;
+      minuteHand.style.transform = `translate(-50%, 0) rotate(${minutesDegrees}deg)`;
+      secondHand.style.transform = `translate(-50%, 0) rotate(${secondsDegrees}deg)`;
+
+      // Digital clock display
+      const digitalClock = document.getElementById('digital-clock');
+      let displayHours = hours % 12 || 12;
+      let ampm = hours >= 12 ? 'PM' : 'AM';
+      displayHours = displayHours < 10 ? '0' + displayHours : displayHours;
+      const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
+      const displaySeconds = seconds < 10 ? '0' + seconds : seconds;
+      digitalClock.innerHTML = `${displayHours}:${displayMinutes}:${displaySeconds} ${ampm}`;
+    }
+
+    setInterval(setClock, 1000);
+    setClock();
+  </script>
+
+
+</body></html>
